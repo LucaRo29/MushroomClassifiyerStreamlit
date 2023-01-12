@@ -17,9 +17,13 @@ def init_model():
 
 
 def main():
-    st.markdown("<h1 style='text-align: center; color: black;'>What the Funghi?</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: Black; font-size:50pt;'>What the Funghi?</h1>", unsafe_allow_html=True)
+    st.write('')
+    st.write('')
 
-    st.subheader("Choose an image of a mushroom!")
+    # st.text("Choose an image of a mushroom!")
+    st.markdown("<p style='color: Black; font-size:14pt;'>Choose an image of a mushroom!</p>",
+                unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=['.png', '.jpg'])
 
     if (uploaded_file is not None):
@@ -35,7 +39,7 @@ def main():
         with col3:
             st.write('')
 
-    checkExpAI = st.checkbox("Explainable AI")
+    checkExpAI = st.checkbox("Select for Explainable AI analysis")
     if st.button("Classify"):
         if uploaded_file is None:
             st.markdown("<h2 style='text-align: center; color: black;'>Please upload an image first!</h2>",
