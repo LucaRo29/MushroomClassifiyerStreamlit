@@ -7,8 +7,13 @@ from lib import *
 from PIL import Image
 from mushroom_classifier import MushroomClassifier
 import wikipedia
+import requests
+from bs4 import BeautifulSoup
 
-st.set_page_config(layout="wide")
+
+#st.set_page_config(layout="wide")
+st.set_page_config(page_title="Mushroom Classifier", page_icon=":guardsman:", layout="wide", initial_sidebar_state="expanded")
+
 
 
 @st.experimental_singleton
@@ -69,10 +74,77 @@ def main():
                 st.write("")
                 st.write("")
                 st.write("")
-                st.markdown("<h2 style='text-align: center; color: White;'>Wikipedia entry</h2>",
+                st.markdown("<h2 style='text-align: center; color: White;'>Wikipedia information summary</h2>",
                             unsafe_allow_html=True)
                 st.write("")
                 st.write(wikipedia.summary(label, sentences=5, auto_suggest=False))
+                
+                url_wiki = 'https://en.wikipedia.org/wiki/'+label
+                table_class = "infobox vcard"
+                response = requests.get(url_wiki)
+
+                # parse data from the html into a beautifulsoup object
+                soup = BeautifulSoup(response.text, 'html.parser')
+                side_panel = soup.find('table', {'class': "infobox"})
+
+                df = pd.read_html(str(side_panel))
+                # convert list to dataframe
+                df = pd.DataFrame(df[0])
+                print("-----")
+                print(df)
+
+                #print(wikipedia.page(label).content)
+                p8 = "No data"
+                p9 = "No data"
+                if df[label].iloc[9] == "Type species":
+                    p8 = df[label+".1"].iloc[10]
+                if df[label].iloc[11] == "Diversities" or df[label].iloc[11] == "Species":
+                    p9 = df[label+".1"].iloc[12]
+                #print("---", df[label].iloc[9])
+                classification_data = {
+                    "Kingdom": df[label+".1"].iloc[3],
+                    "Division": df[label+".1"].iloc[4],
+                    "Class": df[label+".1"].iloc[5],
+                    "Order": df[label+".1"].iloc[6],
+                    "Family": df[label+".1"].iloc[7],
+                    "Type species": p8,
+                    "Diversities": p9,
+                    "image": wikipedia.page(label).images[0]
+                }
+
+                #st.title("Scientific classification")
+                st.sidebar.markdown("""
+                <style>
+                    .reportview-container .sidebar {
+                        background-color: #7AA0D3 !important;
+                    }
+                </style>
+                """,unsafe_allow_html=True)
+                
+                st.sidebar.image(classification_data["image"])
+                st.sidebar.title("Scientific Classification")
+                
+                for key, value in classification_data.items():
+                    if key == "image":
+                        continue
+                    if value != "":
+                        st.sidebar.markdown("{}: {}".format(key, value))
+                    else:
+                        st.sidebar.markdown("{}:".format(key))
+                    
+                    #st.sidebar.write("{}: {}".format(key, value))
+                
+                # with st.sidebar:
+                #     for key, value in classification_data.items():
+                #         st.subheader(key)
+                #         st.write(value)
+
+                # st.title("Scientific classification")
+
+                # with st.expander("Classification"):
+                #     for key, value in classification_data.items():
+                #         st.subheader(key)
+                #         st.write(value)
 
             if checkExpAI:
                 st.write("")
