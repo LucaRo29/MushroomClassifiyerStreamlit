@@ -102,6 +102,7 @@ def main():
 
                 url_wiki = 'https://en.wikipedia.org/wiki/' + label
                 table_class = "infobox vcard"
+                print(url_wiki)
                 response = requests.get(url_wiki)
 
                 # parse data from the html into a beautifulsoup object
@@ -114,24 +115,40 @@ def main():
                 print("-----")
                 print(df)
 
+                print("--- test: ", url_wiki, label)
+                #print(wikipedia.page(url_wiki).images)
+                print(wikipedia.page(label, auto_suggest=False))
+                print(wikipedia.page(label, auto_suggest=False).images)
+
                 # print(wikipedia.page(label).content)
                 p8 = "No data"
                 p9 = "No data"
-                if df[label].iloc[9] == "Type species":
-                    p8 = df[label + ".1"].iloc[10]
-                if df[label].iloc[11] == "Diversities" or df[label].iloc[11] == "Species":
-                    p9 = df[label + ".1"].iloc[12]
+                label2 = label
+                if label2 == "Hygrocybe":
+                    df = df["Hygrocybe"]
+                    label2 = "Scientific classification"
+
+                if label2 != "Scientific classification" and df[label2].iloc[9] == "Type species":
+                    p8 = df[label2 + ".1"].iloc[10]
+                if label2 != "Scientific classification" and (df[label2].iloc[11] == "Diversities" or df[label2].iloc[11] == "Species"):
+                    p9 = df[label2 + ".1"].iloc[12]
                 # print("---", df[label].iloc[9])
                 classification_data = {
-                    "Kingdom": df[label + ".1"].iloc[3],
-                    "Division": df[label + ".1"].iloc[4],
-                    "Class": df[label + ".1"].iloc[5],
-                    "Order": df[label + ".1"].iloc[6],
-                    "Family": df[label + ".1"].iloc[7],
+                    "Kingdom": df[label2 + ".1"].iloc[3],
+                    "Division": df[label2 + ".1"].iloc[4],
+                    "Class": df[label2 + ".1"].iloc[5],
+                    "Order": df[label2 + ".1"].iloc[6],
+                    "Family": df[label2 + ".1"].iloc[7],
                     "Type species": p8,
                     "Diversities": p9,
-                    "image": wikipedia.page(label).images[0]
+                    "image": wikipedia.page(label, auto_suggest=False).images[0]
                 }
+
+                for link in wikipedia.page(label, auto_suggest=False).images:
+                    if label in link:
+                        classification_data["image"] = link
+                        break
+
 
                 # st.title("Scientific classification")
                 st.sidebar.markdown("""
