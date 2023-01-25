@@ -14,6 +14,26 @@ from bs4 import BeautifulSoup
 #st.set_page_config(layout="wide")
 st.set_page_config(page_title="Mushroom Classifier", page_icon=":guardsman:", layout="wide", initial_sidebar_state="expanded")
 
+st.markdown("""
+<style>
+    .light-mode {
+        color: black;
+    }
+    .dark-mode {
+        color: white;
+    }
+    @media (prefers-color-scheme: light) {
+        body {
+            --text-color: black;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        body {
+            --text-color: white;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
 
 
 @st.experimental_singleton
@@ -22,12 +42,12 @@ def init_model():
 
 
 def main():
-    st.markdown("<h1 style='text-align: center; color: White; font-size:50pt;'>What the Funghi?</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: var(--text-color); font-size:50pt;'>What the Funghi?</h1>", unsafe_allow_html=True)
     st.write('')
     st.write('')
 
     # st.text("Choose an image of a mushroom!")
-    st.markdown("<p style='color: White; font-size:14pt;'>Choose an image of a mushroom!</p>",
+    st.markdown("<p style='color: var(--text-color); font-size:14pt;'>Choose an image of a mushroom!</p>",
                 unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=['.png', '.jpg'])
 
@@ -47,7 +67,7 @@ def main():
     checkExpAI = st.checkbox("Select for Explainable AI analysis")
     if st.button("Classify"):
         if uploaded_file is None:
-            st.markdown("<h2 style='text-align: center; color: White;'>Please upload an image first!</h2>",
+            st.markdown("<h2 style='text-align: center; color: var(--text-color);'>Please upload an image first!</h2>",
                         unsafe_allow_html=True)
         else:
 
@@ -55,13 +75,13 @@ def main():
             # cropped_img, grad_fig, occ_fig, wikiresult
             label = CLASSES[pred_label_idx]
 
-            st.markdown("<h2 style='text-align: center; color: White;'>Classification result:</h2>",
+            st.markdown("<h2 style='text-align: center; color: var(--text-color);'>Classification result:</h2>",
                         unsafe_allow_html=True)
             st.write("")
 
-            st.markdown("<h2 style='text-align: center; color: White;'>" + label + "</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: White;'>with a certainty of</p>", unsafe_allow_html=True)
-            st.markdown("<h2 style='text-align: center; color: White;'>" + str(certainty) + "</h2>",
+            st.markdown("<h2 style='text-align: center; color: var(--text-color);'>" + label + "</h2>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: var(--text-color);'>with a certainty of</p>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center; color: var(--text-color);'>" + str(certainty) + "</h2>",
                         unsafe_allow_html=True)
 
             fig, ax = plt.subplots(figsize=(12, 2))
@@ -74,7 +94,7 @@ def main():
                 st.write("")
                 st.write("")
                 st.write("")
-                st.markdown("<h2 style='text-align: center; color: White;'>Wikipedia information summary</h2>",
+                st.markdown("<h2 style='text-align: center; color: var(--text-color);'>Wikipedia information summary</h2>",
                             unsafe_allow_html=True)
                 st.write("")
                 st.write(wikipedia.summary(label, sentences=5, auto_suggest=False))
@@ -150,7 +170,7 @@ def main():
                 st.write("")
                 st.write("")
                 st.write("")
-                st.markdown("<h2 style='text-align: center; color: White;'>Explainable AI:</h2>",
+                st.markdown("<h2 style='text-align: center; color: var(--text-color);'>Explainable AI:</h2>",
                             unsafe_allow_html=True)
                 st.write("")
                 st.write("")
