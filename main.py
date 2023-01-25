@@ -52,6 +52,7 @@ def main():
     uploaded_file = st.file_uploader("", type=['.png', '.jpg'])
 
     if (uploaded_file is not None):
+
         col1, col2, col3 = st.columns(3)
 
         with col1:
@@ -98,8 +99,8 @@ def main():
                             unsafe_allow_html=True)
                 st.write("")
                 st.write(wikipedia.summary(label, sentences=5, auto_suggest=False))
-                
-                url_wiki = 'https://en.wikipedia.org/wiki/'+label
+
+                url_wiki = 'https://en.wikipedia.org/wiki/' + label
                 table_class = "infobox vcard"
                 response = requests.get(url_wiki)
 
@@ -113,37 +114,37 @@ def main():
                 print("-----")
                 print(df)
 
-                #print(wikipedia.page(label).content)
+                # print(wikipedia.page(label).content)
                 p8 = "No data"
                 p9 = "No data"
                 if df[label].iloc[9] == "Type species":
-                    p8 = df[label+".1"].iloc[10]
+                    p8 = df[label + ".1"].iloc[10]
                 if df[label].iloc[11] == "Diversities" or df[label].iloc[11] == "Species":
-                    p9 = df[label+".1"].iloc[12]
-                #print("---", df[label].iloc[9])
+                    p9 = df[label + ".1"].iloc[12]
+                # print("---", df[label].iloc[9])
                 classification_data = {
-                    "Kingdom": df[label+".1"].iloc[3],
-                    "Division": df[label+".1"].iloc[4],
-                    "Class": df[label+".1"].iloc[5],
-                    "Order": df[label+".1"].iloc[6],
-                    "Family": df[label+".1"].iloc[7],
+                    "Kingdom": df[label + ".1"].iloc[3],
+                    "Division": df[label + ".1"].iloc[4],
+                    "Class": df[label + ".1"].iloc[5],
+                    "Order": df[label + ".1"].iloc[6],
+                    "Family": df[label + ".1"].iloc[7],
                     "Type species": p8,
                     "Diversities": p9,
                     "image": wikipedia.page(label).images[0]
                 }
 
-                #st.title("Scientific classification")
+                # st.title("Scientific classification")
                 st.sidebar.markdown("""
                 <style>
                     .reportview-container .sidebar {
                         background-color: #7AA0D3 !important;
                     }
                 </style>
-                """,unsafe_allow_html=True)
-                
+                """, unsafe_allow_html=True)
+
                 st.sidebar.image(classification_data["image"])
                 st.sidebar.title("Scientific Classification")
-                
+
                 for key, value in classification_data.items():
                     if key == "image":
                         continue
@@ -151,9 +152,9 @@ def main():
                         st.sidebar.markdown("{}: {}".format(key, value))
                     else:
                         st.sidebar.markdown("{}:".format(key))
-                    
-                    #st.sidebar.write("{}: {}".format(key, value))
-                
+
+                    # st.sidebar.write("{}: {}".format(key, value))
+
                 # with st.sidebar:
                 #     for key, value in classification_data.items():
                 #         st.subheader(key)
@@ -181,13 +182,14 @@ def main():
 
                 with col1:
                     st.subheader("      Model input image")
+                    st.subheader("")
                     cropped_img = model.crop_transformations(Image.open(uploaded_file))
                     st.image(cropped_img, use_column_width=True)
                 with col2:
-                    st.subheader("      Gradient-based attribution")
+                    st.subheader("        Gradient-based attribution")
                     st.pyplot(grad_fig)
                 with col3:
-                    st.subheader("      Occlusion-based attribution")
+                    st.subheader("        Occlusion-based attribution")
                     st.pyplot(occ_fig)
 
 
@@ -286,7 +288,7 @@ def exp_AI(transformed_img, pred_label_idx):
 
 
 def preprocess_input(image):
-    image = Image.open(image)
+    image = Image.open(image).convert('RGB')
     cropped_img = model.crop_transformations(image)
     transformed_img = model.norm_transformations(cropped_img)
     return transformed_img
