@@ -10,9 +10,8 @@ import wikipedia
 import requests
 from bs4 import BeautifulSoup
 
-
-#st.set_page_config(layout="wide")
-st.set_page_config(page_title="Mushroom Classifier", page_icon=":guardsman:", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Mushroom Classifier", page_icon=":guardsman:", layout="wide",
+                   initial_sidebar_state="expanded")
 
 st.markdown("""
 <style>
@@ -42,17 +41,16 @@ def init_model():
 
 
 def main():
-    st.markdown("<h1 style='text-align: center; color: var(--text-color); font-size:50pt;'>What the Funghi?</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: var(--text-color); font-size:50pt;'>What the Funghi?</h1>",
+                unsafe_allow_html=True)
     st.write('')
     st.write('')
 
-    # st.text("Choose an image of a mushroom!")
     st.markdown("<p style='color: var(--text-color); font-size:14pt;'>Choose an image of a mushroom!</p>",
                 unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=['.png', '.jpg'])
 
     if (uploaded_file is not None):
-
         col1, col2, col3 = st.columns(3)
 
         with col1:
@@ -73,15 +71,17 @@ def main():
         else:
 
             certainty, pred_label_idx, y_pred, = classify(transformed_image)
-            # cropped_img, grad_fig, occ_fig, wikiresult
+
             label = CLASSES[pred_label_idx]
 
             st.markdown("<h2 style='text-align: center; color: var(--text-color);'>Classification result:</h2>",
                         unsafe_allow_html=True)
             st.write("")
 
-            st.markdown("<h2 style='text-align: center; color: var(--text-color);'>" + label + "</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: var(--text-color);'>with a certainty of</p>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center; color: var(--text-color);'>" + label + "</h2>",
+                        unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: var(--text-color);'>with a certainty of</p>",
+                        unsafe_allow_html=True)
             st.markdown("<h2 style='text-align: center; color: var(--text-color);'>" + str(certainty) + "</h2>",
                         unsafe_allow_html=True)
 
@@ -95,14 +95,15 @@ def main():
                 st.write("")
                 st.write("")
                 st.write("")
-                st.markdown("<h2 style='text-align: center; color: var(--text-color);'>Wikipedia information summary</h2>",
-                            unsafe_allow_html=True)
+                st.markdown(
+                    "<h2 style='text-align: center; color: var(--text-color);'>Wikipedia information summary</h2>",
+                    unsafe_allow_html=True)
                 st.write("")
                 st.write(wikipedia.summary(label, sentences=5, auto_suggest=False))
 
                 url_wiki = 'https://en.wikipedia.org/wiki/' + label
                 table_class = "infobox vcard"
-                print(url_wiki)
+
                 response = requests.get(url_wiki)
 
                 # parse data from the html into a beautifulsoup object
@@ -112,15 +113,7 @@ def main():
                 df = pd.read_html(str(side_panel))
                 # convert list to dataframe
                 df = pd.DataFrame(df[0])
-                print("-----")
-                print(df)
 
-                print("--- test: ", url_wiki, label)
-                #print(wikipedia.page(url_wiki).images)
-                print(wikipedia.page(label, auto_suggest=False))
-                print(wikipedia.page(label, auto_suggest=False).images)
-
-                # print(wikipedia.page(label).content)
                 p8 = "No data"
                 p9 = "No data"
                 label2 = label
@@ -130,9 +123,10 @@ def main():
 
                 if label2 != "Scientific classification" and df[label2].iloc[9] == "Type species":
                     p8 = df[label2 + ".1"].iloc[10]
-                if label2 != "Scientific classification" and (df[label2].iloc[11] == "Diversities" or df[label2].iloc[11] == "Species"):
+                if label2 != "Scientific classification" and (
+                        df[label2].iloc[11] == "Diversities" or df[label2].iloc[11] == "Species"):
                     p9 = df[label2 + ".1"].iloc[12]
-                # print("---", df[label].iloc[9])
+
                 classification_data = {
                     "Kingdom": df[label2 + ".1"].iloc[3],
                     "Division": df[label2 + ".1"].iloc[4],
@@ -149,8 +143,6 @@ def main():
                         classification_data["image"] = link
                         break
 
-
-                # st.title("Scientific classification")
                 st.sidebar.markdown("""
                 <style>
                     .reportview-container .sidebar {
@@ -169,20 +161,6 @@ def main():
                         st.sidebar.markdown("{}: {}".format(key, value))
                     else:
                         st.sidebar.markdown("{}:".format(key))
-
-                    # st.sidebar.write("{}: {}".format(key, value))
-
-                # with st.sidebar:
-                #     for key, value in classification_data.items():
-                #         st.subheader(key)
-                #         st.write(value)
-
-                # st.title("Scientific classification")
-
-                # with st.expander("Classification"):
-                #     for key, value in classification_data.items():
-                #         st.subheader(key)
-                #         st.write(value)
 
             if checkExpAI:
                 st.write("")
@@ -266,42 +244,7 @@ def exp_AI(transformed_img, pred_label_idx):
         outlier_perc=2,
         use_pyplot=False)
 
-    # st.pyplot(grad_fig[0])
-    # st.pyplot(occ_fig[0])
-
-    #
-    # input_img_path = os.path.join('static', 'results', f'{wz_image.filename[:-4]}_inp.jpg')
-    # if os.path.isfile(input_img_path):
-    #     os.remove(input_img_path)
-    #
-    # bbox = occ_fig[0].get_window_extent().transformed(occ_fig[0].dpi_scale_trans.inverted())
-    # width, height = bbox.width * occ_fig[0].dpi, bbox.height * occ_fig[0].dpi
-    # # print("hi",width, height)
-    # cropped_img.resize((int(cropped_img.width * 1.5), int(cropped_img.height * 1.5))).save(input_img_path)
-    #
-    # occ_output_img_path = os.path.join('static', 'results', f'{wz_image.filename[:-4]}_occ.jpg')
-    # if os.path.isfile(occ_output_img_path):
-    #     os.remove(occ_output_img_path)
-    # occ_fig[0].savefig(occ_output_img_path, bbox_inches='tight')
-    #
-    # grad_output_img_path = os.path.join('static', 'results', f'{wz_image.filename[:-4]}_grad.jpg')
-    # if os.path.isfile(grad_output_img_path):
-    #     os.remove(grad_output_img_path)
-    # grad_fig[0].savefig(grad_output_img_path, bbox_inches='tight')
-
-    # wikiresult = wikipedia.summary(label, sentences=5, auto_suggest=False)
-
     return grad_fig[0], occ_fig[0]
-    # output = {
-    #     'image1': input_img_path,
-    #     'image2': occ_output_img_path,
-    #     'image3': grad_output_img_path,
-    #     'name': label,
-    #     'text': f'Certainty: {certainty}',
-    #     'wiki': wikiresult
-    # }
-    #
-    # return output
 
 
 def preprocess_input(image):
